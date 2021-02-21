@@ -58,7 +58,26 @@ const app = Vue.createApp({
     })
 
     const roadimg = computed(() => {
-      return game.value < 2 ? 'url(./assets/road.gif)' : 'url(./assets/road.jpg)'
+      var loadimgvalue = ''
+      if(game.value < 2){
+        switch (gametype.value) {
+          case undefined:
+          case "":
+          case 0:
+          case "0":
+          case "1":
+          case "2":
+            loadimgvalue = 'url(./assets/road.gif)'
+            break;
+          case "12":
+          case "13":
+            loadimgvalue = 'url(./assets/re-road.gif)'
+            break;
+        }
+      }else{
+        loadimgvalue = 'url(./assets/road.jpg)'
+      }
+      return loadimgvalue
     })
 
     const scoreText = computed(() => {
@@ -69,7 +88,6 @@ const app = Vue.createApp({
       setInterval(() => {
         if (game.value === 1) {
           // add score
-          console.log(gametype.value)
           switch (gametype.value) {
             case undefined:
             case "":
