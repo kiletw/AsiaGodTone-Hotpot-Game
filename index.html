@@ -62,14 +62,35 @@
             <br>
             <span class="text-danger">左右傾斜超過 50 度就會跌倒</span>
           </h3>
-          <input type="button" value="開始遊戲" class="btn btn-success" @click="restart">
+          {{gametype = ""}}
+          <div class="form-group row col-2 offset-5">
+            <select v-model="gametype" class="form-control">
+              <option value="" disabled selected>請選擇遊戲版本</option>
+              <option value="0">原版</option>
+              <option value="1">作弊版</option>
+              <option value="2">颱風版</option>
+              <option value="12">倒退版</option>
+              <option value="13">倒退作弊版</option>
+            </select>
+            <input type="button" value="開始遊戲" class="btn btn-success form-control" @click="restart(gametype)">
+          </div>
+
         </div>
       </div>
       <div class="row mx-auto align-items-center" id="title" v-if="game === 2">
         <div class="col-12 text-white text-center">
           <h1 class="display-1">遊戲結束</h1>
           <h1>距離: {{ scoreText }} 公尺</h1>
-          <input type="button" value="再玩一次" class="btn btn-success" @click="restart">
+          <div class="form-group row col-2 offset-5">
+            <select v-model="gametype" class="form-control">
+              <option value="0">原版</option>
+              <option value="1">作弊版</option>
+              <option value="2">颱風版</option>
+              <option value="12">倒退版</option>
+              <option value="13">倒退作弊版</option>
+            </select>
+            <input type="button" value="再玩一次" class="btn btn-success form-control" @click="restart(gametype)">
+          </div>
           <br>
           <br>
           <p>
