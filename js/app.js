@@ -1,10 +1,5 @@
-const {
-  ref,
-  onMounted,
-  watch,
-  computed,
-  reactive
-} = Vue
+const { ref, onMounted, watch, computed, reactive } = Vue
+const { useDeviceOrientation, useMouse } = VueUse
 
 const app = Vue.createApp({
   setup(context) {
@@ -21,19 +16,51 @@ const app = Vue.createApp({
     const score = ref(0)
     const userinput = ref(5)
     const gametype = ref(0)
+    // 0 = input range
+    // 1 = mouse
+    // 2 = device
+    const control = ref(0)
+    const mouse = reactive(useMouse())
+    const device = reactive(useDeviceOrientation())
 
-    const restart = (value) => {
+    const restart = (value,retry) => {
       userinput.value = 5
       score.value = 0
       angle.value = 0
       level.value = 0.1
       game.value = 1
       gametype.value = value
-      audio.pause()
-      audio.currentTime = 0
-      audio.src = './assets/bgm.mp3'
-      audio.loop = true
-      audio.play()
+      if (retry) {
+        audio.src = './assets/again.mp3'
+        audio.loop = false
+        audio.play()
+        
+        audio.onended = () => {
+          audio.src = './assets/bgm.mp3'
+          audio.currentTime = 0
+          audio.loop = true
+          audio.play()
+          audio.onended = null
+        }
+  
+      } else {
+        audio.currentTime = 0
+        audio.src = './assets/bgm.mp3'
+        audio.loop = true
+        audio.play()
+      }
+    watch(mouse, value => {
+      if (game.value === 1 && control.value === 1) {
+        userinput.value = (mouse.x - (window.innerWidth / 2)) / 100 + 5
+      }
+    })
+
+    watch(device, value => {
+      if (game.value === 1 && control.value === 2) {
+        const gamma = device.gamma <= -50.0 ? -50.0 : device.gamma >= 50.0 ? 50.0 : device.gamma
+        userinput.value = (gamma / 10) + 5
+      }
+    })
     }
 
 
@@ -43,8 +70,8 @@ const app = Vue.createApp({
       }
     })
 
-    watch(game, (value) => {
-      if (game.value === 2) {
+    watch(game, (value, oldvalue) => {
+      if (value === 2) {
         angle.value = 0
 
         audio.src = './assets/fail2.mp3'
@@ -124,14 +151,20 @@ const app = Vue.createApp({
 
     return {
       angle,
-      level,
       game,
       score,
       gameimg,
       roadimg,
       userinput,
       scoreText,
-      restart
+  	  restart,
+      control,
+      mouse,
+      device
     }
   }
 }).mount('#app')
+const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+const tooltipList = tooltipTriggerList.map((tooltipTriggerEl) => {
+  return new bootstrap.Tooltip(tooltipTriggerEl)
+})
