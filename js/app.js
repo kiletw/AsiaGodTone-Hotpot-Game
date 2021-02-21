@@ -65,8 +65,8 @@ const app = Vue.createApp({
 
           // wind
           level.value += score.value * 0.00001
-          const positive = Math.random() > 0.5
-          const wind = Math.round(Math.random()*3)*level.value
+          const positive = 0
+          const wind = 0
 
           // user input
           angle.value += userinput.value - 5
